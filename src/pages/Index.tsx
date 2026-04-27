@@ -1,6 +1,7 @@
 import { Header } from "@/components/Header"
 import { HeroSection } from "@/components/HeroSection"
 import { PartnersSection } from "@/components/PartnersSection"
+import { AboutSection } from "@/components/AboutSection"
 import { FeaturesSection } from "@/components/FeaturesSection"
 
 export default function Index() {
@@ -9,6 +10,7 @@ export default function Index() {
       <Header />
       <HeroSection />
       <PartnersSection />
+      <AboutSection />
       <FeaturesSection />
       <footer className="py-8 text-center text-sm text-gray-400">
         От пополнения до вывода дивидендов —{" "}
