@@ -2,6 +2,7 @@ import { useState } from "react"
 import { X, Eye, EyeOff, ArrowUpRight, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
+import func2url from "../../backend/func2url.json"
 
 interface RegisterModalProps {
   open: boolean
@@ -12,14 +13,49 @@ export function RegisterModal({ open, onClose }: RegisterModalProps) {
   const [mode, setMode] = useState<"register" | "login">("register")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
   const [form, setForm] = useState({ name: "", email: "", password: "" })
 
   if (!open) return null
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError("")
+    setSuccess("")
     setLoading(true)
-    setTimeout(() => setLoading(false), 1500)
+
+    try {
+      const res = await fetch(func2url.auth, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: mode,
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || "Что-то пошло не так")
+      } else {
+        localStorage.setItem("session_token", data.session_token)
+        localStorage.setItem("user", JSON.stringify(data.user))
+        setSuccess(mode === "register" ? `Добро пожаловать, ${data.user.name}! 🎉` : `С возвращением, ${data.user.name}!`)
+        setTimeout(() => {
+          onClose()
+          setSuccess("")
+          setForm({ name: "", email: "", password: "" })
+        }, 1500)
+      }
+    } catch {
+      setError("Ошибка соединения. Попробуйте снова.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -43,13 +79,13 @@ export function RegisterModal({ open, onClose }: RegisterModalProps) {
 
         <div className="flex gap-1 mb-8 bg-[#1a1a1a] rounded-xl p-1">
           <button
-            onClick={() => setMode("register")}
+            onClick={() => { setMode("register"); setError("") }}
             className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${mode === "register" ? "bg-violet-600 text-white" : "text-gray-400 hover:text-white"}`}
           >
             Регистрация
           </button>
           <button
-            onClick={() => setMode("login")}
+            onClick={() => { setMode("login"); setError("") }}
             className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${mode === "login" ? "bg-violet-600 text-white" : "text-gray-400 hover:text-white"}`}
           >
             Войти
@@ -65,6 +101,7 @@ export function RegisterModal({ open, onClose }: RegisterModalProps) {
                 placeholder="Иван Иванов"
                 value={form.name}
                 onChange={e => setForm({ ...form, name: e.target.value })}
+                required
                 className="w-full rounded-xl bg-[#0f0f0f] border border-[#262626] px-4 py-3 text-sm text-white placeholder-gray-600 outline-none focus:border-violet-500 transition-colors"
               />
             </div>
@@ -77,6 +114,7 @@ export function RegisterModal({ open, onClose }: RegisterModalProps) {
               placeholder="ivan@example.com"
               value={form.email}
               onChange={e => setForm({ ...form, email: e.target.value })}
+              required
               className="w-full rounded-xl bg-[#0f0f0f] border border-[#262626] px-4 py-3 text-sm text-white placeholder-gray-600 outline-none focus:border-violet-500 transition-colors"
             />
           </div>
@@ -89,6 +127,8 @@ export function RegisterModal({ open, onClose }: RegisterModalProps) {
                 placeholder="Минимум 8 символов"
                 value={form.password}
                 onChange={e => setForm({ ...form, password: e.target.value })}
+                required
+                minLength={8}
                 className="w-full rounded-xl bg-[#0f0f0f] border border-[#262626] px-4 py-3 pr-12 text-sm text-white placeholder-gray-600 outline-none focus:border-violet-500 transition-colors"
               />
               <button
@@ -106,6 +146,18 @@ export function RegisterModal({ open, onClose }: RegisterModalProps) {
               <p className="text-xs text-violet-300">
                 🎁 Бонус новичка — <span className="font-semibold">+500 ₽</span> на баланс при первом пополнении от 5 000 ₽
               </p>
+            </div>
+          )}
+
+          {error && (
+            <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3">
+              <p className="text-xs text-red-400">{error}</p>
+            </div>
+          )}
+
+          {success && (
+            <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-4 py-3">
+              <p className="text-xs text-emerald-400">{success}</p>
             </div>
           )}
 
