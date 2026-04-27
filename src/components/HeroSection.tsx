@@ -17,8 +17,8 @@ export function HeroSection() {
       <p className="mb-8 max-w-xl text-gray-400">Баланс, операции, реферальная программа и вывод средств на карту или криптокошелёк — всё в одном месте.</p>
 
       <div className="flex flex-col sm:flex-row items-center gap-4">
-        <Button className="rounded-full bg-violet-600 px-6 hover:bg-violet-700 text-white">
-          Открыть кабинет <ArrowUpRight className="ml-2 h-4 w-4" />
+        <Button className="rounded-full bg-violet-600 px-8 py-6 text-base hover:bg-violet-700 text-white shadow-lg shadow-violet-500/25">
+          Начать зарабатывать <ArrowUpRight className="ml-2 h-5 w-5" />
         </Button>
         <Button variant="outline" className="rounded-full border-gray-700 bg-transparent text-white hover:bg-gray-800">
           <Play className="mr-2 h-4 w-4 fill-violet-500 text-violet-500" /> Как это работает
