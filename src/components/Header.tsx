@@ -1,9 +1,13 @@
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 
 export function Header() {
+  const navigate = useNavigate()
+  const isLoggedIn = !!localStorage.getItem("session_token")
+
   return (
     <header className="flex items-center justify-between px-8 py-4">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
         <ФинПотокLogo />
         <span className="text-lg font-semibold text-white">
           ФинПоток<sup className="text-xs">™</sup>
@@ -11,31 +15,20 @@ export function Header() {
       </div>
 
       <nav className="hidden md:flex items-center gap-8">
-        <a href="#about" className="text-sm text-gray-300 hover:text-white transition-colors">
-          О компании
-        </a>
-        <a href="#operations" className="text-sm text-gray-300 hover:text-white transition-colors">
-          Операции
-        </a>
-        <a href="#balance" className="text-sm text-gray-300 hover:text-white transition-colors">
-          Баланс
-        </a>
-        <a href="#referral" className="text-sm text-gray-300 hover:text-white transition-colors">
-          Рефералы
-        </a>
-        <a href="#deposit" className="text-sm text-gray-300 hover:text-white transition-colors">
-          Пополнение
-        </a>
-        <a href="#withdraw" className="text-sm text-gray-300 hover:text-white transition-colors">
-          Вывод
-        </a>
+        <a href="#about" className="text-sm text-gray-300 hover:text-white transition-colors">О компании</a>
+        <a href="#operations" className="text-sm text-gray-300 hover:text-white transition-colors">Операции</a>
+        <a href="#balance" className="text-sm text-gray-300 hover:text-white transition-colors">Баланс</a>
+        <a href="#referral" className="text-sm text-gray-300 hover:text-white transition-colors">Рефералы</a>
+        <a href="#deposit" className="text-sm text-gray-300 hover:text-white transition-colors">Пополнение</a>
+        <a href="#withdraw" className="text-sm text-gray-300 hover:text-white transition-colors">Вывод</a>
       </nav>
 
       <Button
         variant="outline"
+        onClick={() => isLoggedIn ? navigate("/dashboard") : undefined}
         className="rounded-full border-violet-500 text-violet-400 hover:bg-violet-500/10 hover:text-violet-300 bg-transparent"
       >
-        Войти в кабинет
+        {isLoggedIn ? "Мой кабинет" : "Войти в кабинет"}
       </Button>
     </header>
   )

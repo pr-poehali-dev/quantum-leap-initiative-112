@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { X, Eye, EyeOff, ArrowUpRight, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
@@ -10,6 +11,7 @@ interface RegisterModalProps {
 }
 
 export function RegisterModal({ open, onClose }: RegisterModalProps) {
+  const navigate = useNavigate()
   const [mode, setMode] = useState<"register" | "login">("register")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -49,7 +51,8 @@ export function RegisterModal({ open, onClose }: RegisterModalProps) {
           onClose()
           setSuccess("")
           setForm({ name: "", email: "", password: "" })
-        }, 1500)
+          navigate("/dashboard")
+        }, 1200)
       }
     } catch {
       setError("Ошибка соединения. Попробуйте снова.")
