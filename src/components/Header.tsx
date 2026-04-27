@@ -1,4 +1,3 @@
-import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function Header() {
@@ -12,20 +11,23 @@ export function Header() {
       </div>
 
       <nav className="hidden md:flex items-center gap-8">
-        <a href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-          Продукты
+        <a href="#about" className="text-sm text-gray-300 hover:text-white transition-colors">
+          О компании
         </a>
-        <a href="#" className="text-sm text-gray-300 hover:text-white transition-colors flex items-center gap-1">
-          Решения <ChevronDown className="h-4 w-4" />
+        <a href="#operations" className="text-sm text-gray-300 hover:text-white transition-colors">
+          Операции
         </a>
-        <a href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-          Ресурсы
+        <a href="#balance" className="text-sm text-gray-300 hover:text-white transition-colors">
+          Баланс
         </a>
-        <a href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-          Тарифы
+        <a href="#referral" className="text-sm text-gray-300 hover:text-white transition-colors">
+          Рефералы
         </a>
-        <a href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-          Контакты
+        <a href="#deposit" className="text-sm text-gray-300 hover:text-white transition-colors">
+          Пополнение
+        </a>
+        <a href="#withdraw" className="text-sm text-gray-300 hover:text-white transition-colors">
+          Вывод
         </a>
       </nav>
 
@@ -33,7 +35,7 @@ export function Header() {
         variant="outline"
         className="rounded-full border-violet-500 text-violet-400 hover:bg-violet-500/10 hover:text-violet-300 bg-transparent"
       >
-        Запросить демо
+        Войти в кабинет
       </Button>
     </header>
   )
