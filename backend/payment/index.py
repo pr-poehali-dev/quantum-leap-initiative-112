@@ -8,6 +8,7 @@ import base64
 import psycopg2
 import urllib.request
 import urllib.error
+import traceback
 
 SCHEMA = "t_p14924622_quantum_leap_initiat"
 
@@ -68,8 +69,8 @@ def handler(event: dict, context) -> dict:
     if not user:
         return {"statusCode": 401, "headers": CORS, "body": json.dumps({"error": "Сессия не найдена"})}
 
-    # POST /payment — создать платёж
-    if method == "POST" and "/payment" in path and "/status" not in path:
+    # POST — создать платёж
+    if method == "POST":
         body = json.loads(event.get("body") or "{}")
         amount = body.get("amount")
         return_url = body.get("return_url", "https://poehali.dev")
@@ -99,8 +100,13 @@ def handler(event: dict, context) -> dict:
             method="POST",
         )
 
-        with urllib.request.urlopen(req) as resp:
-            result = json.loads(resp.read().decode())
+        try:
+            with urllib.request.urlopen(req) as resp:
+                result = json.loads(resp.read().decode())
+        except urllib.error.HTTPError as e:
+            err_body = e.read().decode()
+            print(f"YooKassa error {e.code}: {err_body}")
+            return {"statusCode": 502, "headers": CORS, "body": json.dumps({"error": f"Ошибка ЮКассы: {err_body}"})}
 
         payment_id = result["id"]
         confirmation_url = result["confirmation"]["confirmation_url"]
@@ -121,8 +127,8 @@ def handler(event: dict, context) -> dict:
             "body": json.dumps({"payment_id": payment_id, "confirmation_url": confirmation_url}),
         }
 
-    # GET /payment/status?payment_id=xxx — проверить статус
-    if method == "GET" and "status" in path:
+    # GET ?payment_id=xxx — проверить статус
+    if method == "GET":
         payment_id = event.get("queryStringParameters", {}).get("payment_id")
         if not payment_id:
             return {"statusCode": 400, "headers": CORS, "body": json.dumps({"error": "payment_id обязателен"})}
