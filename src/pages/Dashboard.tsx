@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { LogOut, TrendingUp, TrendingDown, CreditCard, ArrowDownToLine, Users, Copy, CheckCheck, Wallet, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
+import { toast } from "sonner"
 import func2url from "../../backend/func2url.json"
 
 interface User {
@@ -66,9 +67,15 @@ export default function Dashboard() {
         body: JSON.stringify({ amount, return_url: window.location.href }),
       })
       const data = await res.json()
+      console.log("Payment response:", data)
       if (data.confirmation_url) {
         window.location.href = data.confirmation_url
+      } else {
+        toast.error(data.error || "Ошибка при создании платежа")
       }
+    } catch (e) {
+      console.error("Payment error:", e)
+      toast.error("Не удалось подключиться к серверу оплаты")
     } finally {
       setPaymentLoading(false)
     }
