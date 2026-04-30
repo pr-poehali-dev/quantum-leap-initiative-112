@@ -28,6 +28,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
   const [activeTab, setActiveTab] = useState<"overview" | "operations" | "deposit" | "withdraw" | "referral">("overview")
+  const [depositAmount, setDepositAmount] = useState("")
+  const [paymentLoading, setPaymentLoading] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem("session_token")
@@ -49,6 +51,27 @@ export default function Dashboard() {
     localStorage.removeItem("session_token")
     localStorage.removeItem("user")
     navigate("/")
+  }
+
+  const handleDeposit = async () => {
+    const amount = parseFloat(depositAmount)
+    if (!amount || amount < 100) return
+    const token = localStorage.getItem("session_token")
+    if (!token) return
+    setPaymentLoading(true)
+    try {
+      const res = await fetch(func2url.payment, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Session-Token": token },
+        body: JSON.stringify({ amount, return_url: window.location.href }),
+      })
+      const data = await res.json()
+      if (data.confirmation_url) {
+        window.location.href = data.confirmation_url
+      }
+    } finally {
+      setPaymentLoading(false)
+    }
   }
 
   const handleCopy = () => {
@@ -245,15 +268,15 @@ export default function Dashboard() {
                 <label className="text-xs text-gray-400 mb-1.5 block">Сумма пополнения</label>
                 <div className="flex items-center rounded-xl bg-[#0f0f0f] border border-[#262626] px-4 py-3 focus-within:border-violet-500 transition-colors">
                   <span className="text-gray-500 mr-2">₽</span>
-                  <input type="number" placeholder="0" min="100" className="flex-1 bg-transparent text-white placeholder-gray-600 outline-none text-lg font-semibold" />
+                  <input type="number" placeholder="0" min="100" value={depositAmount} onChange={e => setDepositAmount(e.target.value)} className="flex-1 bg-transparent text-white placeholder-gray-600 outline-none text-lg font-semibold" />
                 </div>
                 <p className="text-xs text-gray-600 mt-1">Минимум 100 ₽</p>
               </div>
               <div className="rounded-xl bg-violet-500/10 border border-violet-500/20 px-4 py-3">
                 <p className="text-xs text-violet-300">🎁 Бонус новичка +500 ₽ при первом пополнении от 5 000 ₽</p>
               </div>
-              <Button className="w-full rounded-xl bg-violet-600 hover:bg-violet-700 text-white py-6 text-base">
-                <CreditCard className="mr-2 h-5 w-5" /> Перейти к оплате
+              <Button onClick={handleDeposit} disabled={paymentLoading || !depositAmount || parseFloat(depositAmount) < 100} className="w-full rounded-xl bg-violet-600 hover:bg-violet-700 text-white py-6 text-base disabled:opacity-50">
+                <CreditCard className="mr-2 h-5 w-5" /> {paymentLoading ? "Загрузка..." : "Перейти к оплате"}
               </Button>
             </div>
           </div>
