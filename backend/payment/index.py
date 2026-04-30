@@ -90,7 +90,7 @@ def handler(event: dict, context) -> dict:
         shop_id = os.environ["YOOKASSA_SHOP_ID"]
         secret_key = os.environ["YOOKASSA_SECRET_KEY"]
         credentials = base64.b64encode(f"{shop_id}:{secret_key}".encode()).decode()
-        print(f"Using shop_id: '{shop_id}' secret_prefix: '{secret_key[:12]}'")
+        print(f"Using shop_id: '{shop_id}' secret_prefix: '{secret_key[:12]}'"  )
 
         req = urllib.request.Request(
             "https://api.yookassa.ru/v3/payments",
