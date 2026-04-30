@@ -10,7 +10,7 @@ import urllib.request
 import urllib.error
 import traceback
 
-SCHEMA = "t_p14924622_quantum_leap_initiat"
+SCHEMA = "t_p14924622_quantum_leap_initiat"  # noqa
 
 CORS = {
     "Access-Control-Allow-Origin": "*",
